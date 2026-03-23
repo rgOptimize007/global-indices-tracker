@@ -1,0 +1,10 @@
+{
+  "name": "@global-indices/mfe-nifty",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "node server.js dev",
+    "build": "node build.js",
+    "start": "node server.js start"
+  }
+}

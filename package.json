@@ -1,0 +1,21 @@
+{
+  "name": "global-indices-tracker",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "start": "npm run start --workspaces --if-present",
+    "dev:container": "npm run dev --workspace @global-indices/container",
+    "dev:mfe-nifty": "npm run dev --workspace @global-indices/mfe-nifty",
+    "dev:mfe-nasdaq": "npm run dev --workspace @global-indices/mfe-nasdaq",
+    "start:container": "npm run start --workspace @global-indices/container",
+    "start:mfe-nifty": "npm run start --workspace @global-indices/mfe-nifty",
+    "start:mfe-nasdaq": "npm run start --workspace @global-indices/mfe-nasdaq",
+    "build:container": "npm run build --workspace @global-indices/container",
+    "build:mfe-nifty": "npm run build --workspace @global-indices/mfe-nifty",
+    "build:mfe-nasdaq": "npm run build --workspace @global-indices/mfe-nasdaq"
+  }
+}
