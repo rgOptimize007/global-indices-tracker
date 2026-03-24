@@ -1,42 +1,82 @@
-const movers = [
-  { label: 'Top sector', value: 'Financial Services' },
-  { label: 'Breadth', value: '31 advancers / 19 decliners' },
-  { label: 'Volatility', value: 'Moderate' }
-];
+import { useEffect, useMemo, useState } from 'react';
+import { fetchMarketSnapshot, type MarketSnapshot } from './marketData';
 
-export default function MarketCard() {
+export type MarketCardProps = {
+  sourceLabel?: string;
+};
+
+type AsyncState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | { status: 'success'; data: MarketSnapshot };
+
+function currency(value: number) {
+  return new Intl.NumberFormat('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(value);
+}
+
+function percent(value: number) {
+  return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
+}
+
+export default function MarketCard({ sourceLabel = 'Remote · mfe-nifty' }: MarketCardProps) {
+  const [state, setState] = useState<AsyncState>({ status: 'loading' });
+
+  const load = async () => {
+    setState({ status: 'loading' });
+    try {
+      const data = await fetchMarketSnapshot();
+      setState({ status: 'success', data });
+    } catch (error) {
+      setState({ status: 'error', message: error instanceof Error ? error.message : 'Failed to load NIFTY data.' });
+    }
+  };
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  const tone = useMemo(() => {
+    if (state.status !== 'success') return '';
+    return state.data.absoluteChange >= 0 ? 'is-positive' : 'is-negative';
+  }, [state]);
+
   return (
-    <article className="market-card nifty-theme">
-      <header>
-        <p className="market-card__eyebrow">Remote · mfe-nifty</p>
-        <div className="market-card__headline">
-          <div>
-            <h2>NIFTY 50</h2>
-            <p>Owned and rendered entirely by the Indian-market micro frontend.</p>
+    <article className={`market-card nifty-theme ${tone}`.trim()}>
+      <p className="market-card__eyebrow">{sourceLabel}</p>
+
+      {state.status === 'loading' && <p className="market-card__status">Loading NIFTY quote…</p>}
+
+      {state.status === 'error' && (
+        <div className="market-card__status market-card__status--error" role="alert">
+          <p>{state.message}</p>
+          <button type="button" onClick={() => void load()}>Retry</button>
+        </div>
+      )}
+
+      {state.status === 'success' && (
+        <>
+          <div className="market-card__headline">
+            <h2>{state.data.indexName}</h2>
+            <strong>{currency(state.data.currentValue)}</strong>
           </div>
-          <strong>+1.18%</strong>
-        </div>
-      </header>
 
-      <dl className="market-card__stats">
-        <div>
-          <dt>Last close</dt>
-          <dd>24,982.15</dd>
-        </div>
-        <div>
-          <dt>Day range</dt>
-          <dd>24,701.40 – 25,021.90</dd>
-        </div>
-      </dl>
+          <dl className="market-card__stats">
+            <div>
+              <dt>Absolute change</dt>
+              <dd>{state.data.absoluteChange >= 0 ? '+' : ''}{currency(state.data.absoluteChange)}</dd>
+            </div>
+            <div>
+              <dt>Percentage change</dt>
+              <dd>{percent(state.data.percentageChange)}</dd>
+            </div>
+          </dl>
 
-      <ul className="market-card__list">
-        {movers.map((item) => (
-          <li key={item.label}>
-            <span>{item.label}</span>
-            <strong>{item.value}</strong>
-          </li>
-        ))}
-      </ul>
+          <p className="market-card__timestamp">As of {new Date(state.data.asOf).toLocaleString()}</p>
+        </>
+      )}
     </article>
   );
 }
