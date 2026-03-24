@@ -1,34 +1,34 @@
 # Global Indices Tracker
 
-A micro-frontend dashboard for global market indices built with **React + Vite + Module Federation**. The repository is organized as an npm workspace with one host shell (`container`) and index-specific remote apps (`mfe-nifty`, `mfe-nasdaq`).
+Global Indices Tracker is a **micro-frontend dashboard** built with **React + Vite + Module Federation**. It uses one host shell (`container`) that composes index-specific remote apps (`mfe-nifty`, `mfe-nasdaq`).
 
 ## Architecture overview
 
 ### Shell (`apps/container`)
-The container is the host app. It is responsible for:
-- shared page layout and navigation
-- rendering remote boundaries (loading + error fallback)
-- composing federated remotes into one dashboard
-- avoiding index-specific business logic/data ownership
+The shell is the host application. Its responsibilities are to:
+- provide shared layout, navigation, and page structure
+- define remote loading boundaries (loading and error UX)
+- compose multiple remotes into a single dashboard view
+- avoid owning index-specific market logic or data fetching
 
 ### Remotes (`apps/mfe-*`)
-Each remote is responsible for:
-- fetching/producing its own market snapshot
-- rendering the index card UI for that market
-- exposing `./MarketCard` via Module Federation
-- running independently for local development and preview
+Each remote is an independently runnable micro-frontend. Its responsibilities are to:
+- own index-specific market data loading/mock behavior
+- render index UI (`MarketCard`) and related local styles
+- expose `./MarketCard` via Module Federation
+- remain independently buildable and previewable
 
-In short: **the shell orchestrates composition, remotes own market behavior and data fetching**.
+In short: **the shell handles composition; remotes handle domain behavior and data.**
 
 ---
 
 ## Workspace and package manager
 
-This monorepo uses:
-- **npm workspaces** (declared in root `package.json` as `"workspaces": ["apps/*"]`)
-- **npm + package-lock.json** as the package manager/lockfile choice
+- Monorepo workspace model: **npm workspaces**
+- Workspace declaration: root `package.json` → `"workspaces": ["apps/*"]`
+- Package manager and lockfile: **npm** + `package-lock.json`
 
-### Install dependencies
+## Install dependencies
 
 From the repository root:
 
@@ -38,54 +38,52 @@ npm install
 
 ---
 
-## Local development
+## Run the apps locally
 
-### Ports
+## Ports used
 
-| App | Workspace package | Dev port | Preview port |
+| App | Package | Dev port | Preview port |
 |---|---|---:|---:|
 | Host shell | `@global-indices/container` | `3000` | `3000` |
 | NIFTY remote | `@global-indices/mfe-nifty` | `3001` | `3001` |
 | NASDAQ remote | `@global-indices/mfe-nasdaq` | `3002` | `3002` |
 
-The host is configured to load remote entries from:
+The shell resolves remotes at:
 - `http://localhost:3001/assets/remoteEntry.js`
 - `http://localhost:3002/assets/remoteEntry.js`
 
-### Run everything together
+### Run all workspaces at once
 
 ```bash
 npm run dev
 ```
 
-This starts all workspace dev servers concurrently via workspace scripts.
-
-### Run the host container only
+### Run only the host shell (`container`)
 
 ```bash
 npm run dev:container
 ```
 
-### Run each micro-frontend only
+### Run each micro-frontend individually
 
 ```bash
 npm run dev:mfe-nifty
 npm run dev:mfe-nasdaq
 ```
 
-> For end-to-end shell composition, the shell and required remotes must be running at the same time.
+> For full composition in the shell UI, start `container` and any remotes it imports.
 
 ---
 
-## Build and preview
+## Build commands
 
-### Build all workspaces
+### Build everything
 
 ```bash
 npm run build
 ```
 
-### Build a specific app
+### Build each app individually
 
 ```bash
 npm run build:container
@@ -93,7 +91,7 @@ npm run build:mfe-nifty
 npm run build:mfe-nasdaq
 ```
 
-### Preview production build(s)
+### Preview production builds
 
 ```bash
 npm run start:container
@@ -105,57 +103,58 @@ npm run start:mfe-nasdaq
 
 ## Current mock-data approach
 
-At the moment, each remote owns a local mock market-data module (`src/marketData.ts`) that:
-- exports a static `MarketSnapshot`
-- simulates network latency with `setTimeout`
-- intentionally throws an error sometimes (random failure) to exercise retry/error UI states
+Mock market data is currently implemented **inside each remote**, not in the shell:
 
-This keeps development deterministic enough for UI work while still validating loading/error handling in each remote and in the shell boundary behavior.
+- `apps/mfe-nifty/src/marketData.ts`
+- `apps/mfe-nasdaq/src/marketData.ts`
+
+Current behavior pattern:
+- returns a static `MarketSnapshot`
+- simulates request latency with `setTimeout`
+- randomly throws errors (`Math.random() < 0.15`) to exercise retry/fallback UX
+
+This intentionally validates both:
+- remote-local loading/error/success state handling
+- shell-level federation boundary resilience (Suspense + ErrorBoundary)
 
 ---
 
-## Add a new index/region micro-frontend (pattern)
+## Add a new index/region micro-frontend
 
-Follow this established pattern used by `mfe-nifty` and `mfe-nasdaq`.
+Use existing remotes (`mfe-nifty`, `mfe-nasdaq`) as the template pattern.
 
 ### 1) Create a new workspace app
 
 Create a new folder under `apps/`, for example `apps/mfe-ftse`, with:
 - `package.json`
 - `vite.config.ts`
-- `index.html`
 - `tsconfig.json`
+- `index.html`
 - `src/main.tsx`
 - `src/MarketCard.tsx`
 - `src/marketData.ts`
 - `src/styles.css`
 
-Use an existing remote as a template to stay consistent.
+### 2) Configure remote federation in the new app
 
-### 2) Configure Module Federation in the new remote
-
-In the new remote’s `vite.config.ts`:
-- set a unique federation `name` (example: `mfe_ftse`)
+In `apps/mfe-ftse/vite.config.ts`:
+- set a unique federation `name` (for example `mfe_ftse`)
 - set `filename: 'remoteEntry.js'`
-- expose the index card as `./MarketCard`
+- expose `./MarketCard`
 - share `react` and `react-dom`
 
-Also choose a unique local port in that app’s `dev` and `start` scripts.
+Also use a unique local port in the new app’s scripts (for example 3003).
 
-### 3) Implement remote-local data and card UI
+### 3) Implement remote-owned market behavior
 
-Inside the remote:
-- define your mock snapshot in `src/marketData.ts`
-- fetch/load it in `src/MarketCard.tsx`
-- preserve loading/error/success states
-- keep this logic remote-owned (do not move into shell)
+Inside the new remote:
+- define the snapshot/mock loader in `src/marketData.ts`
+- render index UI in `src/MarketCard.tsx`
+- keep loading/error/success states within the remote boundary
 
-### 4) Register the remote in the host shell
+### 4) Register the remote in the shell
 
-Update `apps/container/vite.config.ts`:
-- add a new remote key and `remoteEntry.js` URL under `federation.remotes`
-
-Example shape:
+Update `apps/container/vite.config.ts` with a new entry in `federation.remotes`, e.g.:
 
 ```ts
 remotes: {
@@ -165,27 +164,25 @@ remotes: {
 }
 ```
 
-### 5) Render the remote in `apps/container/src/App.tsx`
+### 5) Render the new remote card in the shell UI
 
-- add a `lazy(() => import('mfe_ftse/MarketCard'))`
-- wrap it in existing `ErrorBoundary` + `Suspense` + `RemoteCardShell`
-- place it in the dashboard grid alongside the other remotes
-- optionally update shell-level summary metrics if desired
+Update `apps/container/src/App.tsx` to:
+- add `lazy(() => import('mfe_ftse/MarketCard'))`
+- wrap it in the same `ErrorBoundary` + `Suspense` + `RemoteCardShell` pattern
+- place it in the dashboard grid with other remotes
 
-### 6) Add convenient root scripts
+### 6) Add root scripts for convenience
 
-In the root `package.json`, add scripts matching existing naming style:
+In root `package.json`, add matching scripts:
 - `dev:mfe-ftse`
 - `start:mfe-ftse`
 - `build:mfe-ftse`
 
 ### 7) Verify locally
 
-Run:
-
 ```bash
 npm run dev:mfe-ftse
 npm run dev:container
 ```
 
-Then open `http://localhost:3000` and confirm the new card loads through federation and handles loading/error states properly.
+Then open `http://localhost:3000` and confirm the new remote loads and handles loading/error states correctly.
