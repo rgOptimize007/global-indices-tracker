@@ -1,0 +1,145 @@
+.card {
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.9);
+  padding: 1rem;
+  display: grid;
+  gap: 0.9rem;
+  color: #e2e8f0;
+}
+
+.header {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.value {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.45rem;
+}
+
+.tonePositive {
+  color: #22c55e;
+}
+
+.toneNegative {
+  color: #ef4444;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.65rem;
+}
+
+.gridItem {
+  background: rgba(30, 41, 59, 0.88);
+  border-radius: 0.75rem;
+  padding: 0.7rem 0.75rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.gridLabel {
+  color: #cbd5e1;
+  font-size: 0.83rem;
+}
+
+.gridValue {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.sparklinePlaceholder {
+  border: 1px dashed rgba(148, 163, 184, 0.45);
+  border-radius: 0.75rem;
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  color: #94a3b8;
+  font-size: 0.78rem;
+}
+
+.footer {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.86rem;
+}
+
+.loaderWrap {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.loaderText {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.loaderBar {
+  height: 0.55rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.2), rgba(125, 211, 252, 0.9), rgba(148, 163, 184, 0.2));
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+.errorWrap {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(248, 113, 113, 0.5);
+  background: rgba(127, 29, 29, 0.22);
+}
+
+.errorMessage {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #fecaca;
+}
+
+.retryButton {
+  width: fit-content;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #fef2f2;
+  color: #7f1d1d;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
