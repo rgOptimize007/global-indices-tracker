@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Card, CardGrid, CardGridItem, ErrorState, Loader } from '../../../shared/ui';
 import { fetchMarketSnapshot, type MarketSnapshot } from './marketData';
 
 export type MarketCardProps = {
@@ -38,45 +39,41 @@ export default function MarketCard({ sourceLabel = 'Remote · mfe-nasdaq' }: Mar
     void load();
   }, []);
 
-  const tone = useMemo(() => {
-    if (state.status !== 'success') return '';
-    return state.data.absoluteChange >= 0 ? 'is-positive' : 'is-negative';
-  }, [state]);
+  if (state.status === 'loading') {
+    return (
+      <Card eyebrow={sourceLabel} title="NASDAQ Composite">
+        <Loader message="Loading NASDAQ quote…" />
+      </Card>
+    );
+  }
+
+  if (state.status === 'error') {
+    return (
+      <Card eyebrow={sourceLabel} title="NASDAQ Composite">
+        <ErrorState message={state.message} onRetry={() => void load()} />
+      </Card>
+    );
+  }
+
+  const tone = state.data.absoluteChange >= 0 ? 'positive' : 'negative';
 
   return (
-    <article className={`market-card nasdaq-theme ${tone}`.trim()}>
-      <p className="market-card__eyebrow">{sourceLabel}</p>
-
-      {state.status === 'loading' && <p className="market-card__status">Loading NASDAQ quote…</p>}
-
-      {state.status === 'error' && (
-        <div className="market-card__status market-card__status--error" role="alert">
-          <p>{state.message}</p>
-          <button type="button" onClick={() => void load()}>Retry</button>
-        </div>
-      )}
-
-      {state.status === 'success' && (
-        <>
-          <div className="market-card__headline">
-            <h2>{state.data.indexName}</h2>
-            <strong>{currency(state.data.currentValue)}</strong>
-          </div>
-
-          <dl className="market-card__stats">
-            <div>
-              <dt>Absolute change</dt>
-              <dd>{state.data.absoluteChange >= 0 ? '+' : ''}{currency(state.data.absoluteChange)}</dd>
-            </div>
-            <div>
-              <dt>Percentage change</dt>
-              <dd>{percent(state.data.percentageChange)}</dd>
-            </div>
-          </dl>
-
-          <p className="market-card__timestamp">As of {new Date(state.data.asOf).toLocaleString()}</p>
-        </>
-      )}
-    </article>
+    <Card
+      eyebrow={sourceLabel}
+      title={state.data.indexName}
+      value={currency(state.data.currentValue)}
+      tone={tone}
+      showSparklinePlaceholder
+      footer={`As of ${new Date(state.data.asOf).toLocaleString()}`}
+    >
+      <CardGrid>
+        <CardGridItem
+          label="Absolute change"
+          value={`${state.data.absoluteChange >= 0 ? '+' : ''}${currency(state.data.absoluteChange)}`}
+          tone={tone}
+        />
+        <CardGridItem label="Percentage change" value={percent(state.data.percentageChange)} tone={tone} />
+      </CardGrid>
+    </Card>
   );
 }
