@@ -11,5 +11,7 @@ body {
 .remote-preview {
   min-height: 100vh;
   padding: 1rem;
-  background: radial-gradient(circle at top, rgba(59, 130, 246, 0.24), transparent 35%), #020617;
+  background:
+    radial-gradient(circle at top, rgba(56, 189, 248, 0.26), transparent 35%),
+    linear-gradient(180deg, #020617 0%, #0a1225 100%);
 }
