@@ -218,6 +218,8 @@ Example values (separate Vercel projects for each remote):
 - `VITE_MFE_NIFTY_URL=https://global-indices-mfe-nifty.vercel.app`
 - `VITE_MFE_NASDAQ_URL=https://global-indices-mfe-nasdaq.vercel.app`
 
+Trailing slashes are supported in both values (for example, `https://.../`) and are normalized automatically by the container build config.
+
 If these variables are absent, local defaults are used:
 - `http://localhost:3001`
 - `http://localhost:3002`
