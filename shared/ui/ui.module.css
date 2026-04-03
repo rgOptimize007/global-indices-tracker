@@ -1,24 +1,24 @@
 .card {
-  border-radius: 1rem;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  background: rgba(15, 23, 42, 0.9);
-  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #232834;
+  background: #0b0e14;
+  padding: 0.95rem;
   display: grid;
-  gap: 0.9rem;
-  color: #e2e8f0;
+  gap: 0.85rem;
+  color: #e5e9f0;
 }
 
 .header {
   display: grid;
-  gap: 0.4rem;
+  gap: 0.32rem;
 }
 
 .eyebrow {
   margin: 0;
-  font-size: 0.76rem;
-  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: #9ea5b3;
 }
 
 .titleRow {
@@ -30,108 +30,138 @@
 
 .title {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
 }
 
 .value {
   margin: 0;
   font-weight: 700;
-  font-size: 1.45rem;
+  font-size: 1.35rem;
 }
 
 .tonePositive {
-  color: #22c55e;
+  color: #15bd7f;
 }
 
 .toneNegative {
-  color: #ef4444;
+  color: #f23645;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 0.65rem;
+  gap: 0.6rem;
 }
 
 .gridItem {
-  background: rgba(30, 41, 59, 0.88);
-  border-radius: 0.75rem;
-  padding: 0.7rem 0.75rem;
+  background: #131722;
+  border: 1px solid #232834;
+  border-radius: 0.6rem;
+  padding: 0.55rem 0.7rem;
   display: grid;
   gap: 0.2rem;
 }
 
 .gridLabel {
-  color: #cbd5e1;
-  font-size: 0.83rem;
+  color: #9ea5b3;
+  font-size: 0.78rem;
 }
 
 .gridValue {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 0.94rem;
   font-weight: 600;
 }
 
+.sparklineWrap {
+  min-height: 56px;
+  border-radius: 0.6rem;
+  border: 1px solid #232834;
+  background: #0f131d;
+  padding: 0.35rem;
+}
+
+.sparklineSvg {
+  width: 100%;
+  height: 56px;
+}
+
+.sparklineLine {
+  fill: none;
+  stroke-width: 2.8;
+  stroke: #00c0a0;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sparklinePositive {
+  stroke: #15bd7f;
+}
+
+.sparklineNegative {
+  stroke: #f23645;
+}
+
 .sparklinePlaceholder {
-  border: 1px dashed rgba(148, 163, 184, 0.45);
-  border-radius: 0.75rem;
-  min-height: 48px;
+  border: 1px dashed #2a3040;
+  border-radius: 0.65rem;
+  min-height: 52px;
   display: grid;
   place-items: center;
-  color: #94a3b8;
+  color: #7d8594;
   font-size: 0.78rem;
 }
 
 .footer {
   margin: 0;
-  color: #cbd5e1;
-  font-size: 0.86rem;
+  color: #8991a1;
+  font-size: 0.8rem;
 }
 
 .loaderWrap {
   display: grid;
-  gap: 0.6rem;
+  gap: 0.55rem;
 }
 
 .loaderText {
   margin: 0;
-  color: #cbd5e1;
-  font-size: 0.9rem;
+  color: #c6ceda;
+  font-size: 0.88rem;
 }
 
 .loaderBar {
-  height: 0.55rem;
+  height: 0.48rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(148, 163, 184, 0.2), rgba(125, 211, 252, 0.9), rgba(148, 163, 184, 0.2));
+  background: linear-gradient(90deg, rgba(0, 192, 160, 0.1), rgba(0, 192, 160, 0.95), rgba(0, 192, 160, 0.1));
   background-size: 200% 100%;
   animation: shimmer 1.2s linear infinite;
 }
 
 .errorWrap {
   display: grid;
-  gap: 0.65rem;
-  padding: 0.75rem;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(248, 113, 113, 0.5);
-  background: rgba(127, 29, 29, 0.22);
+  gap: 0.6rem;
+  padding: 0.7rem;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(242, 54, 69, 0.6);
+  background: rgba(74, 12, 19, 0.4);
 }
 
 .errorMessage {
   margin: 0;
-  font-size: 0.92rem;
-  color: #fecaca;
+  font-size: 0.9rem;
+  color: #ffd3d8;
 }
 
 .retryButton {
   width: fit-content;
-  border: 0;
+  border: 1px solid rgba(242, 54, 69, 0.55);
   border-radius: 999px;
-  padding: 0.4rem 0.8rem;
+  padding: 0.34rem 0.75rem;
   font-weight: 600;
   cursor: pointer;
-  background: #fef2f2;
-  color: #7f1d1d;
+  background: rgba(242, 54, 69, 0.16);
+  color: #ffe4e7;
 }
 
 @keyframes shimmer {
