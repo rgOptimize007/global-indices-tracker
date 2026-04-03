@@ -26,7 +26,7 @@ export default function MarketCard({ sourceLabel = 'Remote · mfe-nasdaq' }: Mar
   const [state, setState] = useState<AsyncState>({ status: 'loading' });
 
   const load = async () => {
-    setState({ status: 'loading' });
+    setState((previous) => (previous.status === 'success' ? previous : { status: 'loading' }));
     try {
       const data = await fetchMarketSnapshot();
       setState({ status: 'success', data });
@@ -37,11 +37,17 @@ export default function MarketCard({ sourceLabel = 'Remote · mfe-nasdaq' }: Mar
 
   useEffect(() => {
     void load();
+
+    const interval = setInterval(() => {
+      void load();
+    }, 12_000);
+
+    return () => clearInterval(interval);
   }, []);
 
   if (state.status === 'loading') {
     return (
-      <Card eyebrow={sourceLabel} title="NASDAQ Composite">
+      <Card eyebrow={sourceLabel} title="NASDAQ 100">
         <Loader message="Loading NASDAQ quote…" />
       </Card>
     );
@@ -49,7 +55,7 @@ export default function MarketCard({ sourceLabel = 'Remote · mfe-nasdaq' }: Mar
 
   if (state.status === 'error') {
     return (
-      <Card eyebrow={sourceLabel} title="NASDAQ Composite">
+      <Card eyebrow={sourceLabel} title="NASDAQ 100">
         <ErrorState message={state.message} onRetry={() => void load()} />
       </Card>
     );
@@ -63,8 +69,8 @@ export default function MarketCard({ sourceLabel = 'Remote · mfe-nasdaq' }: Mar
       title={state.data.indexName}
       value={currency(state.data.currentValue)}
       tone={tone}
-      showSparklinePlaceholder
-      footer={`As of ${new Date(state.data.asOf).toLocaleString()}`}
+      sparklineData={state.data.sparkline}
+      footer={`Updated ${new Date(state.data.asOf).toLocaleTimeString()}`}
     >
       <CardGrid>
         <CardGridItem

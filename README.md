@@ -77,6 +77,27 @@ npm run dev:mfe-nasdaq
 
 ---
 
+
+### Interactive shell data source (SQLite)
+
+The container chart and index chips are now interactive and are sourced from a local SQLite test dataset.
+
+- SQLite DB path (generated locally, not committed): `apps/container/data/indices.db`
+- Generated JSON consumed by the UI (generated locally, not committed): `apps/container/public/data/indices.json`
+- Generator script: `apps/container/scripts/generate_index_data.py`
+
+The container runs this generator automatically before `dev` and `build` via:
+- `predev`
+- `prebuild`
+
+The generator reseeds SQLite on every run so each build/dev cycle gets fresh timestamps and values.
+
+You can regenerate manually with:
+
+```bash
+python3 apps/container/scripts/generate_index_data.py
+```
+
 ## Build and preview
 
 ### Build all workspaces
@@ -189,3 +210,44 @@ npm run dev:container
 ```
 
 Then open `http://localhost:3000` and confirm the new card loads through federation and handles loading/error states properly.
+
+
+---
+
+## Vercel deployment notes
+
+The shell app (`apps/container`) is the deploy target for this repository. Vercel was failing with:
+
+> No Output Directory named `build` found
+
+because Vite outputs to `dist`, not `build`.
+
+This repository now includes a root `vercel.json` that explicitly configures:
+- `buildCommand`: `npm run vercel-build`
+- `outputDirectory`: `dist` (root-level folder produced from `apps/container/dist`)
+
+### Remote URLs in production
+
+The shell consumes remote federated entries from environment-driven URLs.
+Set these project environment variables in Vercel:
+
+- `VITE_MFE_NIFTY_URL`
+- `VITE_MFE_NASDAQ_URL`
+
+Example values (separate Vercel projects for each remote):
+
+- `VITE_MFE_NIFTY_URL=https://global-indices-mfe-nifty.vercel.app`
+- `VITE_MFE_NASDAQ_URL=https://global-indices-mfe-nasdaq.vercel.app`
+
+If these variables are absent, local defaults are used:
+- `http://localhost:3001`
+- `http://localhost:3002`
+
+### Recommended deployment model
+
+Deploy each app independently (fits micro-frontend architecture):
+- one Vercel project for `apps/mfe-nifty`
+- one Vercel project for `apps/mfe-nasdaq`
+- one Vercel project for `apps/container`
+
+Then wire the remote project URLs into the container via the two `VITE_MFE_*_URL` env vars.
