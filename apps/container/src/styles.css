@@ -1,7 +1,9 @@
 :root {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: #f4f7ff;
-  background: #050608;
+  color: #e2e8f0;
+  background: #030712;
+  line-height: 1.5;
+  font-weight: 400;
 }
 
 * {
@@ -10,8 +12,12 @@
 
 body {
   margin: 0;
-  background: #050608;
-  color: #f4f7ff;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(34, 211, 238, 0.12), transparent 32%),
+    radial-gradient(circle at 85% 5%, rgba(99, 102, 241, 0.14), transparent 36%),
+    linear-gradient(180deg, #020617 0%, #030712 100%);
 }
 
 a {
@@ -23,10 +29,21 @@ a {
   min-height: 100vh;
 }
 
-.tv-shell {
-  width: min(1560px, calc(100% - 2rem));
+.app-shell {
+  width: min(1240px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 0.9rem 0 2.2rem;
+  padding: 1.5rem 0 3rem;
+}
+
+.top-nav,
+.hero-card,
+.info-banner,
+.remote-card,
+.metric-card {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: linear-gradient(160deg, rgba(15, 23, 42, 0.9), rgba(8, 15, 31, 0.86));
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 45px rgba(2, 6, 23, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .tv-topbar {
@@ -34,13 +51,29 @@ a {
   grid-template-columns: auto minmax(180px, 300px) 1fr auto;
   align-items: center;
   gap: 1rem;
-  padding: 0.5rem 0;
+  padding: 1.1rem 1.35rem;
+  border-radius: 1rem;
+  position: sticky;
+  top: 0.9rem;
+  z-index: 10;
 }
 
-.tv-brand {
-  font-size: 1.7rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+.status-pill {
+  border: 1px solid rgba(34, 197, 94, 0.45);
+  color: #bbf7d0;
+  background: rgba(34, 197, 94, 0.12);
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #67e8f9;
 }
 
 .tv-search {
@@ -51,67 +84,22 @@ a {
   font-size: 0.95rem;
 }
 
-.tv-links {
-  display: flex;
-  gap: 1.4rem;
-  justify-content: center;
-  color: #d4d8e0;
-  font-weight: 500;
-}
-
-.tv-links a:hover {
-  color: #3b82f6;
-}
-
-.tv-upgrade {
-  border: 0;
-  border-radius: 0.7rem;
-  padding: 0.5rem 0.95rem;
-  color: #fff;
-  font-weight: 700;
-  background: linear-gradient(90deg, #1977f3, #a21caf);
-  cursor: pointer;
-}
-
-.tv-content {
-  margin-top: 1.1rem;
-}
-
-.tv-hero {
-  text-align: center;
-  padding: 2rem 0 0.7rem;
-}
-
-.tv-breadcrumb {
-  color: #a4aab5;
-  text-transform: lowercase;
-  margin: 0;
-}
-
-.tv-hero h1 {
-  margin: 0.85rem 0 0;
-  font-size: clamp(2rem, 3.3vw, 3.2rem);
-  letter-spacing: -0.02em;
-}
-
 .tv-indices-strip {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.65rem;
-  margin-top: 1.3rem;
+  gap: 1.25rem;
+  margin-top: 1.4rem;
 }
 
-.tv-index-chip {
-  background: #181a1f;
-  border: 1px solid #272a31;
-  border-radius: 999px;
-  padding: 0.6rem 1rem;
+.hero-card,
+.info-banner {
+  border-radius: 1.1rem;
+  padding: 1.35rem;
 }
 
-.tv-index-chip p {
-  margin: 0;
-  color: #dde2eb;
-  font-size: 0.95rem;
+.hero-card {
+  display: grid;
+  gap: 1.35rem;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
 }
 
 .tv-index-chip div {
@@ -122,93 +110,33 @@ a {
   align-items: baseline;
 }
 
-.tv-index-chip span {
-  color: #ffffff;
+.metrics-grid,
+.dashboard-grid {
+  display: grid;
+  gap: 0.9rem;
 }
 
 .up {
   color: #15bd7f;
 }
 
-.down {
-  color: #f23645;
+.metric-card,
+.remote-card {
+  border-radius: 0.9rem;
+  padding: 0.85rem;
 }
 
-.tv-chart-panel {
-  margin-top: 1.1rem;
-  border: 1px solid #1f2330;
-  border-radius: 1rem;
-  background: #090b10;
-  padding: 1rem;
-}
-
-.tv-chart-panel header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.tv-chart-panel h2 {
-  margin: 0;
-  font-size: 2rem;
-}
-
-.tv-chart-panel p {
-  margin: 0;
-  color: #9ba2af;
-}
-
-.tv-chart-wrap {
-  margin-top: 0.8rem;
-  height: min(48vh, 420px);
-}
-
-.tv-chart-wrap svg {
-  width: 100%;
-  height: 100%;
-}
-
-.tv-line {
-  fill: none;
-  stroke: #00c0a0;
-  stroke-width: 1.2;
-}
-
-.tv-timeframes {
-  display: flex;
-  gap: 0.45rem;
-  margin-top: 0.7rem;
-}
-
-.tv-timeframes button {
-  border: 1px solid #262b36;
-  background: transparent;
-  color: #dce1ea;
-  border-radius: 0.55rem;
-  padding: 0.35rem 0.65rem;
-}
-
-.tv-timeframes .active {
-  background: #2b2e35;
+.metric-card {
+  display: grid;
+  gap: 0.3rem;
 }
 
 .tv-remotes {
   margin-top: 1.3rem;
 }
 
-.tv-remotes h2 {
-  margin: 0 0 0.7rem;
-  font-size: 1.35rem;
-}
-
-.remote-card,
-.metric-card,
-.top-nav,
-.hero-card,
-.info-banner {
-  border: 1px solid #1f2330;
-  background: #0a0c12;
-  border-radius: 0.75rem;
+.metric-card strong {
+  font-size: 1.5rem;
 }
 
 .dashboard-grid {
@@ -234,7 +162,7 @@ a {
   width: 100%;
   height: 0.55rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(0, 192, 160, 0.18), rgba(0, 192, 160, 0.85), rgba(0, 192, 160, 0.18));
+  background: linear-gradient(90deg, rgba(103, 232, 249, 0.2), rgba(14, 165, 233, 0.9), rgba(103, 232, 249, 0.2));
   background-size: 200% 100%;
   animation: shimmer 1.4s linear infinite;
 }
@@ -259,17 +187,8 @@ a {
     justify-items: start;
   }
 
-  .tv-links {
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 760px) {
-  .tv-shell {
-    width: min(100% - 1rem, 1560px);
-  }
-
-  .tv-indices-strip {
-    grid-template-columns: 1fr;
+  .app-shell {
+    width: min(100% - 1rem, 1240px);
+    padding-top: 0.55rem;
   }
 }
