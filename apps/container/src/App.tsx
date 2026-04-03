@@ -12,7 +12,25 @@ const shellMetrics = [
   { label: 'Refresh', value: '12s', detail: 'Per-panel updates' }
 ];
 
+const chartPoints: number[] = [12, 14, 13, 15, 13, 14, 16, 15, 18, 17, 20, 22, 21, 23, 25, 24, 28, 27, 29, 31, 30, 33, 32, 34];
+
+function buildChartPath(points: number[]): string {
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const span = max - min || 1;
+
+  return points
+    .map((point, index) => {
+      const x = (index / (points.length - 1)) * 100;
+      const y = 100 - ((point - min) / span) * 100;
+      return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
+    })
+    .join(' ');
+}
+
 export default function App() {
+  const chartPath = buildChartPath(chartPoints);
+
   return (
     <div className="app-shell">
       <header className="top-nav">
