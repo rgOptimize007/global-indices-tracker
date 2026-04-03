@@ -37,16 +37,17 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
     conn.execute('CREATE INDEX IF NOT EXISTS idx_symbol_tf_ts ON index_ticks(symbol, timeframe, ts)')
 
 
-def reseed_dataset(conn: sqlite3.Connection) -> None:
-    """Rebuild the dataset on every run so timestamps and values stay fresh."""
-    conn.execute('DELETE FROM index_ticks')
+def seed_if_empty(conn: sqlite3.Connection) -> None:
+    count = conn.execute('SELECT COUNT(*) FROM index_ticks').fetchone()[0]
+    if count > 0:
+        return
 
     now = datetime.now(timezone.utc).replace(second=0, microsecond=0)
 
     for symbol, name, currency, base, volatility in INDICES:
         for timeframe, points in TIMEFRAMES.items():
             start = now - timedelta(minutes=points * 15)
-
+            value = base
             for i in range(points):
                 phase = i / max(points - 1, 1)
                 wave = math.sin(phase * 6.28) * (base * 0.002)
@@ -54,12 +55,10 @@ def reseed_dataset(conn: sqlite3.Connection) -> None:
                 drift = (i / points) * base * 0.0012
                 value = max(base * 0.82, base + wave + noise + drift)
                 timestamp = (start + timedelta(minutes=i * 15)).isoformat()
-
                 conn.execute(
                     'INSERT INTO index_ticks(symbol, name, currency, timeframe, ts, value) VALUES (?, ?, ?, ?, ?, ?)',
                     (symbol, name, currency, timeframe, timestamp, round(value, 2))
                 )
-
     conn.commit()
 
 
@@ -101,7 +100,7 @@ def main() -> None:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(DB_PATH) as conn:
         ensure_schema(conn)
-        reseed_dataset(conn)
+        seed_if_empty(conn)
         export_json(conn)
 
 
