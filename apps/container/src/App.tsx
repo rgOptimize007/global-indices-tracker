@@ -1,7 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { LoadingCard } from './components/LoadingCard';
-import { RemoteCardShell } from './components/RemoteCardShell';
+import { useState } from 'react';
 
 type Tick = { ts: string; value: number };
 type Timeframe = '1D' | '1W' | '1M';
@@ -11,15 +8,7 @@ type IndexDataset = {
   currency: string;
   series: Record<Timeframe, Tick[]>;
 };
-type DataResponse = { generatedAt: string; timeframes: Timeframe[]; indices: IndexDataset[] };
-
-type LoadState =
-  | { status: 'loading' }
-  | { status: 'error'; message: string }
-  | { status: 'success'; data: DataResponse };
-
-const NiftyCard = lazy(() => import('mfe_nifty/MarketCard'));
-const NasdaqCard = lazy(() => import('mfe_nasdaq/MarketCard'));
+type MajorIndex = { symbol: string; value: string; change: string; tone: 'up' | 'down' };
 
 const shellMetrics = [
   { label: 'Live panes', value: '2', detail: 'Independent MFEs' },
@@ -28,6 +17,13 @@ const shellMetrics = [
 ];
 
 const chartPoints: number[] = [12, 14, 13, 15, 13, 14, 16, 15, 18, 17, 20, 22, 21, 23, 25, 24, 28, 27, 29, 31, 30, 33, 32, 34];
+const timeframes: Timeframe[] = ['1D', '1W', '1M'];
+const majorIndices: MajorIndex[] = [
+  { symbol: 'NIFTY 50', value: '22,514.65', change: '+0.82%', tone: 'up' },
+  { symbol: 'NASDAQ', value: '18,233.91', change: '+0.56%', tone: 'up' },
+  { symbol: 'S&P 500', value: '5,185.42', change: '+0.41%', tone: 'up' },
+  { symbol: 'DAX', value: '18,417.12', change: '-0.18%', tone: 'down' }
+];
 
 function buildChartPath(points: number[]): string {
   const min = Math.min(...points);
@@ -45,6 +41,7 @@ function buildChartPath(points: number[]): string {
 
 export default function App() {
   const chartPath = buildChartPath(chartPoints);
+  const [activeTimeframe, setActiveTimeframe] = useState<Timeframe>('1D');
 
   return (
     <div className="app-shell">
@@ -67,7 +64,7 @@ export default function App() {
             </p>
           </div>
           <div className="tv-timeframes">
-            {state.data.timeframes.map((timeframe) => (
+            {timeframes.map((timeframe) => (
               <button key={timeframe} type="button" className={activeTimeframe === timeframe ? 'active' : ''} onClick={() => setActiveTimeframe(timeframe)}>
                 {timeframe}
               </button>
