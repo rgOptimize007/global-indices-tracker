@@ -6,41 +6,42 @@ import { RemoteCardShell } from './components/RemoteCardShell';
 const NiftyCard = lazy(() => import('mfe_nifty/MarketCard'));
 const NasdaqCard = lazy(() => import('mfe_nasdaq/MarketCard'));
 
-const majorIndices = [
-  { symbol: 'NIFTY 50', value: '22,713.10', change: '+0.15%', tone: 'up' },
-  { symbol: 'SENSEX', value: '73,319.55', change: '+0.25%', tone: 'up' },
-  { symbol: 'NIFTY MIDCAP', value: '12,394.55', change: '-0.53%', tone: 'down' },
-  { symbol: 'NIFTY 500', value: '20,938.35', change: '+0.02%', tone: 'up' },
-  { symbol: 'MIDCAP 100', value: '53,677.05', change: '-0.26%', tone: 'down' }
-] as const;
-
-const chartPoints = [12, 14, 13, 15, 13, 14, 16, 15, 18, 17, 20, 22, 21, 23, 25, 24, 28, 27, 29, 31, 30, 33, 32, 34];
-const chartPath = chartPoints
-  .map((point, index) => {
-    const x = (index / (chartPoints.length - 1)) * 100;
-    const y = 100 - ((point - 12) / (34 - 12)) * 100;
-    return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
-  })
-  .join(' ');
+const shellMetrics = [
+  { label: 'Live panes', value: '2', detail: 'Independent MFEs' },
+  { label: 'Data source', value: 'Mock', detail: 'Remote-owned fetchers' },
+  { label: 'Refresh', value: '12s', detail: 'Per-panel updates' }
+];
 
 export default function App() {
   return (
-    <div className="tv-shell">
-      <header className="tv-topbar">
-        <div className="tv-brand">TV Global Indices</div>
-        <div className="tv-search">Search (Ctrl+K)</div>
-        <nav className="tv-links" aria-label="Primary">
-          <a href="#">Markets</a>
-          <a href="#">Community</a>
-          <a href="#">Products</a>
-        </nav>
-        <button type="button" className="tv-upgrade">Upgrade</button>
+    <div className="app-shell">
+      <header className="top-nav">
+        <div>
+          <p className="eyebrow">Global Indices Tracker</p>
+          <h1>Macro + Equities Control Center</h1>
+        </div>
+        <div className="status-pill">System online</div>
       </header>
 
-      <main className="tv-content">
-        <section className="tv-hero">
-          <p className="tv-breadcrumb">markets / global / indices</p>
-          <h1>India Major indices</h1>
+      <main className="dashboard-content">
+        <section id="overview" className="hero-card">
+          <div>
+            <p className="eyebrow">Container orchestration</p>
+            <h2>Crypto-terminal inspired dashboard for global indices.</h2>
+            <p className="hero-copy">
+              The host handles composition and resilience. Every market tile runs in its own micro frontend,
+              fetches its own data, and can deploy independently.
+            </p>
+          </div>
+          <div className="metrics-grid" aria-label="Shell metrics">
+            {shellMetrics.map((metric) => (
+              <article className="metric-card" key={metric.label}>
+                <span>{metric.label}</span>
+                <strong>{metric.value}</strong>
+                <small>{metric.detail}</small>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="tv-indices-strip" aria-label="Major indices">
@@ -82,25 +83,12 @@ export default function App() {
           </div>
         </section>
 
-        <section className="tv-remotes">
-          <h2>Live MFE panels</h2>
-          <div className="dashboard-grid" aria-label="Remote market dashboard">
-            <ErrorBoundary title="NIFTY widget unavailable" description="The mfe-nifty remote could not be loaded right now.">
-              <Suspense fallback={<LoadingCard title="Loading NIFTY widget" description="Connecting to the mfe-nifty remote." />}>
-                <RemoteCardShell>
-                  <NiftyCard />
-                </RemoteCardShell>
-              </Suspense>
-            </ErrorBoundary>
-
-            <ErrorBoundary title="NASDAQ widget unavailable" description="The mfe-nasdaq remote could not be loaded right now.">
-              <Suspense fallback={<LoadingCard title="Loading NASDAQ widget" description="Connecting to the mfe-nasdaq remote." />}>
-                <RemoteCardShell>
-                  <NasdaqCard />
-                </RemoteCardShell>
-              </Suspense>
-            </ErrorBoundary>
-          </div>
+        <section id="about" className="info-banner">
+          <h2>Modular by design</h2>
+          <p>
+            Add new regions as independent remotes without changing the core shell architecture.
+            The container remains focused on layout, while each remote owns market logic and rendering.
+          </p>
         </section>
       </main>
     </div>
