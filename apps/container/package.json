@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite --port 3000",
     "build": "tsc --noEmit && vite build",
-    "start": "vite preview --port 3000"
+    "start": "vite preview --port 3000",
+    "predev": "python3 scripts/generate_index_data.py",
+    "prebuild": "python3 scripts/generate_index_data.py"
   },
   "dependencies": {
     "react": "^18.3.1",
