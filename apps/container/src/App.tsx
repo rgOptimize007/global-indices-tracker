@@ -1,7 +1,22 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { LoadingCard } from './components/LoadingCard';
 import { RemoteCardShell } from './components/RemoteCardShell';
+
+type Tick = { ts: string; value: number };
+type Timeframe = '1D' | '1W' | '1M';
+type IndexDataset = {
+  symbol: string;
+  name: string;
+  currency: string;
+  series: Record<Timeframe, Tick[]>;
+};
+type DataResponse = { generatedAt: string; timeframes: Timeframe[]; indices: IndexDataset[] };
+
+type LoadState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | { status: 'success'; data: DataResponse };
 
 const NiftyCard = lazy(() => import('mfe_nifty/MarketCard'));
 const NasdaqCard = lazy(() => import('mfe_nasdaq/MarketCard'));
@@ -51,13 +66,11 @@ export default function App() {
               fetches its own data, and can deploy independently.
             </p>
           </div>
-          <div className="metrics-grid" aria-label="Shell metrics">
-            {shellMetrics.map((metric) => (
-              <article className="metric-card" key={metric.label}>
-                <span>{metric.label}</span>
-                <strong>{metric.value}</strong>
-                <small>{metric.detail}</small>
-              </article>
+          <div className="tv-timeframes">
+            {state.data.timeframes.map((timeframe) => (
+              <button key={timeframe} type="button" className={activeTimeframe === timeframe ? 'active' : ''} onClick={() => setActiveTimeframe(timeframe)}>
+                {timeframe}
+              </button>
             ))}
           </div>
         </section>

@@ -77,6 +77,25 @@ npm run dev:mfe-nasdaq
 
 ---
 
+
+### Interactive shell data source (SQLite)
+
+The container chart and index chips are now interactive and are sourced from a local SQLite test dataset.
+
+- SQLite DB path (generated locally, not committed): `apps/container/data/indices.db`
+- Generated JSON consumed by the UI (generated locally, not committed): `apps/container/public/data/indices.json`
+- Generator script: `apps/container/scripts/generate_index_data.py`
+
+The container runs this generator automatically before `dev` and `build` via:
+- `predev`
+- `prebuild`
+
+You can regenerate manually with:
+
+```bash
+python3 apps/container/scripts/generate_index_data.py
+```
+
 ## Build and preview
 
 ### Build all workspaces

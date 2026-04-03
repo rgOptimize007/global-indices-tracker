@@ -16,7 +16,8 @@
     "start:mfe-nasdaq": "npm run start --workspace @global-indices/mfe-nasdaq",
     "build:container": "npm run build --workspace @global-indices/container",
     "build:mfe-nifty": "npm run build --workspace @global-indices/mfe-nifty",
-    "build:mfe-nasdaq": "npm run build --workspace @global-indices/mfe-nasdaq"
+    "build:mfe-nasdaq": "npm run build --workspace @global-indices/mfe-nasdaq",
+    "vercel-build": "npm run build:container && rm -rf dist && cp -R apps/container/dist dist"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

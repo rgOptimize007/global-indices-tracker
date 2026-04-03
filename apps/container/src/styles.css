@@ -186,6 +186,7 @@ a {
     grid-template-columns: 1fr;
     justify-items: start;
   }
+}
 
   .app-shell {
     width: min(100% - 1rem, 1240px);
