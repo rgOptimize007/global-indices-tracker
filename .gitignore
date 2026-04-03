@@ -3,6 +3,3 @@ dist/
 .DS_Store
 .vercel/
 *.log
-
-apps/container/data/*.db
-apps/container/public/data/indices.json

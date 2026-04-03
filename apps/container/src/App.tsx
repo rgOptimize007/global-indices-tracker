@@ -21,11 +21,15 @@ type LoadState =
 const NiftyCard = lazy(() => import('mfe_nifty/MarketCard'));
 const NasdaqCard = lazy(() => import('mfe_nasdaq/MarketCard'));
 
-function buildChartPath(points: number[]): string {
-  if (points.length < 2) {
-    return 'M 0 100 L 100 100';
-  }
+const shellMetrics = [
+  { label: 'Live panes', value: '2', detail: 'Independent MFEs' },
+  { label: 'Data source', value: 'Mock', detail: 'Remote-owned fetchers' },
+  { label: 'Refresh', value: '12s', detail: 'Per-panel updates' }
+];
 
+const chartPoints: number[] = [12, 14, 13, 15, 13, 14, 16, 15, 18, 17, 20, 22, 21, 23, 25, 24, 28, 27, 29, 31, 30, 33, 32, 34];
+
+function buildChartPath(points: number[]): string {
   const min = Math.min(...points);
   const max = Math.max(...points);
   const span = max - min || 1;
@@ -39,108 +43,57 @@ function buildChartPath(points: number[]): string {
     .join(' ');
 }
 
-function formatNumber(value: number, currency: string): string {
-  const locale = currency === 'INR' ? 'en-IN' : 'en-US';
-  return new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
-}
-
-function getDelta(series: Tick[]): { absolute: number; percent: number } {
-  if (series.length < 2) return { absolute: 0, percent: 0 };
-  const first = series[0].value;
-  const latest = series[series.length - 1].value;
-  const absolute = latest - first;
-  const percent = first === 0 ? 0 : (absolute / first) * 100;
-  return { absolute, percent };
-}
-
 export default function App() {
-  const [state, setState] = useState<LoadState>({ status: 'loading' });
-  const [activeTimeframe, setActiveTimeframe] = useState<Timeframe>('1D');
-  const [activeSymbol, setActiveSymbol] = useState('NIFTY50');
-
-  useEffect(() => {
-    if (state.status !== 'loading') {
-      return;
-    }
-
-    fetch('/data/indices.json')
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error('Unable to load index dataset.');
-        }
-        return (await response.json()) as DataResponse;
-      })
-      .then((data) => {
-        setState({ status: 'success', data });
-        if (data.timeframes.length > 0) {
-          setActiveTimeframe(data.timeframes[0]);
-        }
-        if (data.indices.length > 0) {
-          setActiveSymbol(data.indices[0].symbol);
-        }
-      })
-      .catch((error: unknown) => {
-        setState({ status: 'error', message: error instanceof Error ? error.message : 'Failed to load dataset.' });
-      });
-  }, [state.status]);
-
-  if (state.status === 'loading') {
-    return <div className="tv-shell"><p>Loading interactive market dataset…</p></div>;
-  }
-
-  if (state.status === 'error') {
-    return <div className="tv-shell"><p>{state.message}</p></div>;
-  }
-
-  const selected = state.data.indices.find((item) => item.symbol === activeSymbol) ?? state.data.indices[0];
-  const activeSeries = selected.series[activeTimeframe] ?? [];
-  const chartPath = buildChartPath(activeSeries.map((point) => point.value));
+  const chartPath = buildChartPath(chartPoints);
 
   return (
-    <div className="tv-shell">
-      <header className="tv-topbar">
-        <div className="tv-brand">TV Global Indices</div>
-        <div className="tv-search">Search (Ctrl+K)</div>
-        <nav className="tv-links" aria-label="Primary">
-          <a href="#">Markets</a>
-          <a href="#">Community</a>
-          <a href="#">Products</a>
-        </nav>
-        <button type="button" className="tv-upgrade">Upgrade</button>
+    <div className="app-shell">
+      <header className="top-nav">
+        <div>
+          <p className="eyebrow">Global Indices Tracker</p>
+          <h1>Macro + Equities Control Center</h1>
+        </div>
+        <div className="status-pill">System online</div>
       </header>
 
-      <main className="tv-content">
-        <section className="tv-hero">
-          <p className="tv-breadcrumb">markets / global / indices</p>
-          <h1>{selected.name}</h1>
-          <p className="tv-dataset-meta">Data source: local SQLite test dataset • Updated {new Date(state.data.generatedAt).toLocaleString()}</p>
+      <main className="dashboard-content">
+        <section id="overview" className="hero-card">
+          <div>
+            <p className="eyebrow">Container orchestration</p>
+            <h2>Crypto-terminal inspired dashboard for global indices.</h2>
+            <p className="hero-copy">
+              The host handles composition and resilience. Every market tile runs in its own micro frontend,
+              fetches its own data, and can deploy independently.
+            </p>
+          </div>
+          <div className="tv-timeframes">
+            {state.data.timeframes.map((timeframe) => (
+              <button key={timeframe} type="button" className={activeTimeframe === timeframe ? 'active' : ''} onClick={() => setActiveTimeframe(timeframe)}>
+                {timeframe}
+              </button>
+            ))}
+          </div>
         </section>
 
         <section className="tv-indices-strip" aria-label="Major indices">
-          {state.data.indices.map((item) => {
-            const series = item.series[activeTimeframe] ?? [];
-            const latest = series[series.length - 1]?.value ?? 0;
-            const delta = getDelta(series);
-
-            return (
-              <button key={item.symbol} type="button" className={`tv-index-chip ${item.symbol === selected.symbol ? 'active' : ''}`} onClick={() => setActiveSymbol(item.symbol)}>
-                <p>{item.name}</p>
-                <div>
-                  <span>{formatNumber(latest, item.currency)} {item.currency}</span>
-                  <strong className={delta.percent >= 0 ? 'up' : 'down'}>{delta.percent >= 0 ? '+' : ''}{delta.percent.toFixed(2)}%</strong>
-                </div>
-              </button>
-            );
-          })}
+          {majorIndices.map((item) => (
+            <article key={item.symbol} className="tv-index-chip">
+              <p>{item.symbol}</p>
+              <div>
+                <span>{item.value}</span>
+                <strong className={item.tone === 'up' ? 'up' : 'down'}>{item.change}</strong>
+              </div>
+            </article>
+          ))}
         </section>
 
         <section className="tv-chart-panel" aria-label="Primary market chart panel">
           <header>
-            <h2>{selected.name}</h2>
-            <p>{selected.currency} · {activeTimeframe}</p>
+            <h2>Nifty 50 Index</h2>
+            <p>INR · Intraday</p>
           </header>
           <div className="tv-chart-wrap">
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={`${selected.name} line chart`}>
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="Nifty intraday line chart">
               <defs>
                 <linearGradient id="tv-fill" x1="0" x2="0" y1="0" y2="1">
                   <stop offset="0%" stopColor="rgba(0, 191, 166, 0.4)" />
@@ -152,33 +105,21 @@ export default function App() {
             </svg>
           </div>
           <div className="tv-timeframes">
-            {state.data.timeframes.map((timeframe) => (
-              <button key={timeframe} type="button" className={activeTimeframe === timeframe ? 'active' : ''} onClick={() => setActiveTimeframe(timeframe)}>
-                {timeframe}
-              </button>
-            ))}
+            <button type="button" className="active">1D</button>
+            <button type="button">1M</button>
+            <button type="button">3M</button>
+            <button type="button">1Y</button>
+            <button type="button">5Y</button>
+            <button type="button">All</button>
           </div>
         </section>
 
-        <section className="tv-remotes">
-          <h2>Live MFE panels</h2>
-          <div className="dashboard-grid" aria-label="Remote market dashboard">
-            <ErrorBoundary title="NIFTY widget unavailable" description="The mfe-nifty remote could not be loaded right now.">
-              <Suspense fallback={<LoadingCard title="Loading NIFTY widget" description="Connecting to the mfe-nifty remote." />}>
-                <RemoteCardShell>
-                  <NiftyCard />
-                </RemoteCardShell>
-              </Suspense>
-            </ErrorBoundary>
-
-            <ErrorBoundary title="NASDAQ widget unavailable" description="The mfe-nasdaq remote could not be loaded right now.">
-              <Suspense fallback={<LoadingCard title="Loading NASDAQ widget" description="Connecting to the mfe-nasdaq remote." />}>
-                <RemoteCardShell>
-                  <NasdaqCard />
-                </RemoteCardShell>
-              </Suspense>
-            </ErrorBoundary>
-          </div>
+        <section id="about" className="info-banner">
+          <h2>Modular by design</h2>
+          <p>
+            Add new regions as independent remotes without changing the core shell architecture.
+            The container remains focused on layout, while each remote owns market logic and rendering.
+          </p>
         </section>
       </main>
     </div>
