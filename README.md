@@ -90,8 +90,6 @@ The container runs this generator automatically before `dev` and `build` via:
 - `predev`
 - `prebuild`
 
-The generator reseeds SQLite on every run so each build/dev cycle gets fresh timestamps and values.
-
 You can regenerate manually with:
 
 ```bash
