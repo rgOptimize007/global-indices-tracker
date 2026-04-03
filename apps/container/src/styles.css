@@ -188,6 +188,7 @@ a {
   }
 }
 
+@media (max-width: 768px) {
   .app-shell {
     width: min(100% - 1rem, 1240px);
     padding-top: 0.55rem;
