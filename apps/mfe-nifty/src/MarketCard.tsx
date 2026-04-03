@@ -26,7 +26,7 @@ export default function MarketCard({ sourceLabel = 'Remote · mfe-nifty' }: Mark
   const [state, setState] = useState<AsyncState>({ status: 'loading' });
 
   const load = async () => {
-    setState({ status: 'loading' });
+    setState((previous) => (previous.status === 'success' ? previous : { status: 'loading' }));
     try {
       const data = await fetchMarketSnapshot();
       setState({ status: 'success', data });
@@ -37,6 +37,12 @@ export default function MarketCard({ sourceLabel = 'Remote · mfe-nifty' }: Mark
 
   useEffect(() => {
     void load();
+
+    const interval = setInterval(() => {
+      void load();
+    }, 12_000);
+
+    return () => clearInterval(interval);
   }, []);
 
   if (state.status === 'loading') {
@@ -63,8 +69,8 @@ export default function MarketCard({ sourceLabel = 'Remote · mfe-nifty' }: Mark
       title={state.data.indexName}
       value={currency(state.data.currentValue)}
       tone={tone}
-      showSparklinePlaceholder
-      footer={`As of ${new Date(state.data.asOf).toLocaleString()}`}
+      sparklineData={state.data.sparkline}
+      footer={`Updated ${new Date(state.data.asOf).toLocaleTimeString()}`}
     >
       <CardGrid>
         <CardGridItem
