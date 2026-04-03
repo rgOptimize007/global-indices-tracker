@@ -44,22 +44,43 @@ export default function App() {
           </div>
         </section>
 
-        <section id="indices" className="dashboard-grid" aria-label="Remote market dashboard">
-          <ErrorBoundary title="NIFTY widget unavailable" description="The mfe-nifty remote could not be loaded right now.">
-            <Suspense fallback={<LoadingCard title="Loading NIFTY widget" description="Connecting to the mfe-nifty remote." />}>
-              <RemoteCardShell>
-                <NiftyCard />
-              </RemoteCardShell>
-            </Suspense>
-          </ErrorBoundary>
+        <section className="tv-indices-strip" aria-label="Major indices">
+          {majorIndices.map((item) => (
+            <article key={item.symbol} className="tv-index-chip">
+              <p>{item.symbol}</p>
+              <div>
+                <span>{item.value}</span>
+                <strong className={item.tone === 'up' ? 'up' : 'down'}>{item.change}</strong>
+              </div>
+            </article>
+          ))}
+        </section>
 
-          <ErrorBoundary title="NASDAQ widget unavailable" description="The mfe-nasdaq remote could not be loaded right now.">
-            <Suspense fallback={<LoadingCard title="Loading NASDAQ widget" description="Connecting to the mfe-nasdaq remote." />}>
-              <RemoteCardShell>
-                <NasdaqCard />
-              </RemoteCardShell>
-            </Suspense>
-          </ErrorBoundary>
+        <section className="tv-chart-panel" aria-label="Primary market chart panel">
+          <header>
+            <h2>Nifty 50 Index</h2>
+            <p>INR · Intraday</p>
+          </header>
+          <div className="tv-chart-wrap">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="Nifty intraday line chart">
+              <defs>
+                <linearGradient id="tv-fill" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stopColor="rgba(0, 191, 166, 0.4)" />
+                  <stop offset="100%" stopColor="rgba(0, 191, 166, 0.02)" />
+                </linearGradient>
+              </defs>
+              <path d={`${chartPath} L 100 100 L 0 100 Z`} fill="url(#tv-fill)" />
+              <path d={chartPath} className="tv-line" />
+            </svg>
+          </div>
+          <div className="tv-timeframes">
+            <button type="button" className="active">1D</button>
+            <button type="button">1M</button>
+            <button type="button">3M</button>
+            <button type="button">1Y</button>
+            <button type="button">5Y</button>
+            <button type="button">All</button>
+          </div>
         </section>
 
         <section id="about" className="info-banner">

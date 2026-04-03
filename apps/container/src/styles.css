@@ -46,9 +46,9 @@ a {
   box-shadow: 0 20px 45px rgba(2, 6, 23, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
-.top-nav {
-  display: flex;
-  justify-content: space-between;
+.tv-topbar {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 300px) 1fr auto;
   align-items: center;
   gap: 1rem;
   padding: 1.1rem 1.35rem;
@@ -76,11 +76,12 @@ a {
   color: #67e8f9;
 }
 
-.top-nav h1,
-.hero-card h2,
-.info-banner h2,
-.remote-card h3 {
-  margin: 0;
+.tv-search {
+  background: #1f1f24;
+  color: #a7adb8;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  font-size: 0.95rem;
 }
 
 .dashboard-content {
@@ -101,10 +102,12 @@ a {
   grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
 }
 
-.hero-copy,
-.info-banner p {
-  max-width: 62ch;
-  color: #cbd5e1;
+.tv-index-chip div {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.28rem;
+  font-size: 1.08rem;
+  align-items: baseline;
 }
 
 .metrics-grid,
@@ -113,8 +116,8 @@ a {
   gap: 0.9rem;
 }
 
-.metrics-grid {
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+.up {
+  color: #15bd7f;
 }
 
 .metric-card,
@@ -128,9 +131,8 @@ a {
   gap: 0.3rem;
 }
 
-.metric-card span,
-.metric-card small {
-  color: #94a3b8;
+.tv-remotes {
+  margin-top: 1.3rem;
 }
 
 .metric-card strong {
@@ -138,8 +140,9 @@ a {
 }
 
 .dashboard-grid {
+  display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  align-items: stretch;
+  gap: 1rem;
 }
 
 .remote-slot,
@@ -148,22 +151,20 @@ a {
 }
 
 .remote-card {
-  display: grid;
-  gap: 0.75rem;
+  padding: 0.9rem;
 }
 
 .remote-card--fallback {
   min-height: 260px;
-  align-content: start;
 }
 
 .loading-bar {
   width: 100%;
-  height: 0.65rem;
+  height: 0.55rem;
   border-radius: 999px;
   background: linear-gradient(90deg, rgba(103, 232, 249, 0.2), rgba(14, 165, 233, 0.9), rgba(103, 232, 249, 0.2));
   background-size: 200% 100%;
-  animation: shimmer 1.4s infinite linear;
+  animation: shimmer 1.4s linear infinite;
 }
 
 @keyframes shimmer {
@@ -176,12 +177,14 @@ a {
   }
 }
 
-@media (max-width: 800px) {
-  .top-nav,
-  .hero-card {
+@media (max-width: 1200px) {
+  .tv-indices-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tv-topbar {
     grid-template-columns: 1fr;
-    flex-direction: column;
-    align-items: flex-start;
+    justify-items: start;
   }
 
   .app-shell {
