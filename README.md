@@ -189,3 +189,44 @@ npm run dev:container
 ```
 
 Then open `http://localhost:3000` and confirm the new card loads through federation and handles loading/error states properly.
+
+
+---
+
+## Vercel deployment notes
+
+The shell app (`apps/container`) is the deploy target for this repository. Vercel was failing with:
+
+> No Output Directory named `build` found
+
+because Vite outputs to `dist`, not `build`.
+
+This repository now includes a root `vercel.json` that explicitly configures:
+- `buildCommand`: `npm run build:container`
+- `outputDirectory`: `apps/container/dist`
+
+### Remote URLs in production
+
+The shell consumes remote federated entries from environment-driven URLs.
+Set these project environment variables in Vercel:
+
+- `VITE_MFE_NIFTY_URL`
+- `VITE_MFE_NASDAQ_URL`
+
+Example values (separate Vercel projects for each remote):
+
+- `VITE_MFE_NIFTY_URL=https://global-indices-mfe-nifty.vercel.app`
+- `VITE_MFE_NASDAQ_URL=https://global-indices-mfe-nasdaq.vercel.app`
+
+If these variables are absent, local defaults are used:
+- `http://localhost:3001`
+- `http://localhost:3002`
+
+### Recommended deployment model
+
+Deploy each app independently (fits micro-frontend architecture):
+- one Vercel project for `apps/mfe-nifty`
+- one Vercel project for `apps/mfe-nasdaq`
+- one Vercel project for `apps/container`
+
+Then wire the remote project URLs into the container via the two `VITE_MFE_*_URL` env vars.

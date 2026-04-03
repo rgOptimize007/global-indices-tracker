@@ -7,9 +7,9 @@ const NiftyCard = lazy(() => import('mfe_nifty/MarketCard'));
 const NasdaqCard = lazy(() => import('mfe_nasdaq/MarketCard'));
 
 const shellMetrics = [
-  { label: 'Regions covered', value: '2', detail: 'Composable dashboard tiles' },
-  { label: 'Architecture', value: 'MFE', detail: 'Module Federation shell' },
-  { label: 'Refresh model', value: 'Remote', detail: 'Each index owns its own data' }
+  { label: 'Live panes', value: '2', detail: 'Independent MFEs' },
+  { label: 'Data source', value: 'Mock', detail: 'Remote-owned fetchers' },
+  { label: 'Refresh', value: '12s', detail: 'Per-panel updates' }
 ];
 
 export default function App() {
@@ -18,25 +18,19 @@ export default function App() {
       <header className="top-nav">
         <div>
           <p className="eyebrow">Global Indices Tracker</p>
-          <h1>Market overview dashboard</h1>
+          <h1>Macro + Equities Control Center</h1>
         </div>
-        <nav aria-label="Primary">
-          <ul className="nav-links">
-            <li><a href="#overview">Overview</a></li>
-            <li><a href="#indices">Indices</a></li>
-            <li><a href="#about">About shell</a></li>
-          </ul>
-        </nav>
+        <div className="status-pill">System online</div>
       </header>
 
       <main className="dashboard-content">
         <section id="overview" className="hero-card">
           <div>
-            <p className="eyebrow">Container app</p>
-            <h2>Compose remote market widgets without owning their data pipelines.</h2>
+            <p className="eyebrow">Container orchestration</p>
+            <h2>Crypto-terminal inspired dashboard for global indices.</h2>
             <p className="hero-copy">
-              This host only provides shared layout, navigation, and resilient remote boundaries.
-              Each market micro frontend remains responsible for its own index-specific content.
+              The host handles composition and resilience. Every market tile runs in its own micro frontend,
+              fetches its own data, and can deploy independently.
             </p>
           </div>
           <div className="metrics-grid" aria-label="Shell metrics">
@@ -69,10 +63,10 @@ export default function App() {
         </section>
 
         <section id="about" className="info-banner">
-          <h2>Shell responsibilities</h2>
+          <h2>Modular by design</h2>
           <p>
-            The container orchestrates composition concerns like navigation, responsive layout, and remote lifecycle fallbacks.
-            Market data retrieval and rendering logic stay inside each remote to preserve team autonomy.
+            Add new regions as independent remotes without changing the core shell architecture.
+            The container remains focused on layout, while each remote owns market logic and rendering.
           </p>
         </section>
       </main>
